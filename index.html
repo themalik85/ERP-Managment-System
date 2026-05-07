@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-cube"></i> ERP System</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-module="dashboard">
+                    <a href="#"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a>
+                </li>
+                <li data-module="employees">
+                    <a href="#"><i class="fas fa-users"></i> <span>Employees</span></a>
+                </li>
+                <li data-module="inventory">
+                    <a href="#"><i class="fas fa-boxes"></i> <span>Inventory</span></a>
+                </li>
+                <li data-module="sales">
+                    <a href="#"><i class="fas fa-shopping-cart"></i> <span>Sales & Orders</span></a>
+                </li>
+                <li data-module="finance">
+                    <a href="#"><i class="fas fa-chart-line"></i> <span>Finance</span></a>
+                </li>
+                <li data-module="settings">
+                    <a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="themeToggle"><i class="fas fa-moon"></i> <span>Dark Mode</span></button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearch" placeholder="Search...">
+                </div>
+                <div class="user-profile">
+                    <span>Admin User</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <!-- Dashboard Module -->
+            <section class="module active" id="dashboard">
+                <h1>Dashboard</h1>
+                <div class="kpi-cards">
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <h3>Total Revenue</h3>
+                            <p class="kpi-value" id="kpiRevenue">$0</p>
+                            <span class="kpi-change positive"><i class="fas fa-arrow-up"></i> 12%</span>
+                        </div>
+                        <div class="kpi-icon"><i class="fas fa-dollar-sign"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <h3>Total Orders</h3>
+                            <p class="kpi-value" id="kpiOrders">0</p>
+                            <span class="kpi-change positive"><i class="fas fa-arrow-up"></i> 8%</span>
+                        </div>
+                        <div class="kpi-icon"><i class="fas fa-shopping-bag"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <h3>Employees</h3>
+                            <p class="kpi-value" id="kpiEmployees">0</p>
+                            <span class="kpi-change neutral"><i class="fas fa-minus"></i> 0%</span>
+                        </div>
+                        <div class="kpi-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-info">
+                            <h3>Low Stock Items</h3>
+                            <p class="kpi-value" id="kpiLowStock">0</p>
+                            <span class="kpi-change negative"><i class="fas fa-arrow-down"></i> Alert</span>
+                        </div>
+                        <div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    </div>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-container">
+                        <h3>Revenue Overview</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Order Status</h3>
+                        <canvas id="orderChart"></canvas>
+                    </div>
+                </div>
+                <div class="recent-activity">
+                    <h3>Recent Activity</h3>
+                    <ul id="activityList"></ul>
+                </div>
+            </section>
+
+            <!-- Employees Module -->
+            <section class="module" id="employees">
+                <div class="module-header">
+                    <h1>Employee Management</h1>
+                    <button class="btn btn-primary" onclick="openModal('employeeModal')"><i class="fas fa-plus"></i> Add
+                        Employee</button>
+                </div>
+                <div class="table-controls">
+                    <input type="text" id="employeeSearch" placeholder="Search employees...">
+                    <select id="employeeFilter">
+                        <option value="all">All Departments</option>
+                        <option value="Sales">Sales</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="employeeTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Inventory Module -->
+            <section class="module" id="inventory">
+                <div class="module-header">
+                    <h1>Inventory Management</h1>
+                    <button class="btn btn-primary" onclick="openModal('inventoryModal')"><i class="fas fa-plus"></i>
+                        Add Product</button>
+                </div>
+                <div class="table-controls">
+                    <input type="text" id="inventorySearch" placeholder="Search products...">
+                    <select id="inventoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Sales Module -->
+            <section class="module" id="sales">
+                <div class="module-header">
+                    <h1>Sales & Orders</h1>
+                    <button class="btn btn-primary" onclick="openModal('salesModal')"><i class="fas fa-plus"></i> New
+                        Order</button>
+                </div>
+                <div class="table-controls">
+                    <input type="text" id="salesSearch" placeholder="Search orders...">
+                    <select id="salesFilter">
+                        <option value="all">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="salesTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Finance Module -->
+            <section class="module" id="finance">
+                <h1>Finance & Accounting</h1>
+                <div class="finance-summary">
+                    <div class="finance-card income">
+                        <h3>Total Income</h3>
+                        <p class="finance-value" id="financeIncome">$0</p>
+                    </div>
+                    <div class="finance-card expense">
+                        <h3>Total Expenses</h3>
+                        <p class="finance-value" id="financeExpense">$0</p>
+                    </div>
+                    <div class="finance-card profit">
+                        <h3>Net Profit</h3>
+                        <p class="finance-value" id="financeProfit">$0</p>
+                    </div>
+                </div>
+                <div class="charts-row">
+                    <div class="chart-container wide">
+                        <h3>Monthly Financial Overview</h3>
+                        <canvas id="financeChart"></canvas>
+                    </div>
+                </div>
+                <div class="module-header" style="margin-top: 20px;">
+                    <h2>Recent Transactions</h2>
+                    <button class="btn btn-primary" onclick="openModal('transactionModal')"><i class="fas fa-plus"></i>
+                        Add Transaction</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" id="transactionTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Settings Module -->
+            <section class="module" id="settings">
+                <h1>Settings</h1>
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3>Company Profile</h3>
+                        <form id="companyForm">
+                            <div class="form-group">
+                                <label>Company Name</label>
+                                <input type="text" id="companyName" value="ERP Solutions Inc.">
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="companyEmail" value="contact@erpsolutions.com">
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" id="companyPhone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <textarea id="companyAddress">123 Business Ave, Suite 100</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="settings-card">
+                        <h3>Preferences</h3>
+                        <div class="preference-item">
+                            <span>Dark Mode</span>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="preference-item">
+                            <span>Email Notifications</span>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="preference-item">
+                            <span>Auto Save</span>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="settings-card danger-zone">
+                        <h3>Data Management</h3>
+                        <p>Export or reset application data.</p>
+                        <button class="btn btn-secondary" onclick="exportData()"><i class="fas fa-download"></i> Export
+                            Data</button>
+                        <button class="btn btn-danger" onclick="resetData()"><i class="fas fa-trash"></i> Reset All
+                            Data</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="employeeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="employeeModalTitle">Add Employee</h2>
+                <button class="close-btn" onclick="closeModal('employeeModal')">&times;</button>
+            </div>
+            <form id="employeeForm">
+                <input type="hidden" id="employeeId">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="empName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="empEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Department *</label>
+                    <select id="empDepartment" required>
+                        <option value="Sales">Sales</option>
+                        <option value="IT">IT</option>
+                        <option value="HR">HR</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Role *</label>
+                    <input type="text" id="empRole" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="empStatus">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('employeeModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="inventoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="inventoryModalTitle">Add Product</h2>
+                <button class="close-btn" onclick="closeModal('inventoryModal')">&times;</button>
+            </div>
+            <form id="inventoryForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="prodName" required>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="prodCategory" required>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="prodQuantity" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Unit Price *</label>
+                    <input type="number" id="prodPrice" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>SKU</label>
+                    <input type="text" id="prodSku" placeholder="Auto-generated if empty">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('inventoryModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="salesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Order</h2>
+                <button class="close-btn" onclick="closeModal('salesModal')">&times;</button>
+            </div>
+            <form id="salesForm">
+                <div class="form-group">
+                    <label>Customer Name *</label>
+                    <input type="text" id="orderCustomer" required>
+                </div>
+                <div class="form-group">
+                    <label>Items (comma separated) *</label>
+                    <input type="text" id="orderItems" placeholder="e.g., Laptop, Mouse, Keyboard" required>
+                </div>
+                <div class="form-group">
+                    <label>Total Amount *</label>
+                    <input type="number" id="orderTotal" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="orderStatus">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('salesModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="transactionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Transaction</h2>
+                <button class="close-btn" onclick="closeModal('transactionModal')">&times;</button>
+            </div>
+            <form id="transactionForm">
+                <div class="form-group">
+                    <label>Description *</label>
+                    <input type="text" id="transDesc" required>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="transCategory" required>
+                        <option value="Sales">Sales</option>
+                        <option value="Purchase">Purchase</option>
+                        <option value="Salary">Salary</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="transType" required>
+                        <option value="income">Income</option>
+                        <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Amount *</label>
+                    <input type="number" id="transAmount" min="0" step="0.01" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('transactionModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
